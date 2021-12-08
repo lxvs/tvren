@@ -3,7 +3,54 @@
 @REM TV Shows Rename Script
 @REM https://lxvs.net/tvren
 @REM 2021-01-16
-set ext=rmvb
+
+set pfx=
+set sfx=
+set ext=
+set fl=
+:parse_args
+if "%~1" == "" goto end_parse_args
+set "sw=%~1"
+shift
+if "%sw:~0,1%" NEQ "/" (
+    echo haha
+    goto parse_args
+)
+set "sw=%sw:~1%"
+if "%sw%" == "?" goto help
+if /i "%sw%" == "h" goto help
+if /i "%sw%" == "help" goto help
+if /i "%sw%" == "usage" goto help
+if /i "%sw%" == "prefix" (
+    set "pfx=%~1"
+    shift
+    goto parse_args
+)
+if /i "%sw%" == "suffix" (
+    set "sfx=%~1"
+    shift
+    goto parse_args
+)
+if /i "%sw%" == "ext" (
+    set "ext=%~1"
+    shift
+    goto parse_args
+)
+>&2 echo error: invalid switch "%sw%"
+>&2 call:help
+exit /b 1
+:end_parse_args
+
+if "%ext%" == "" goto end_ext
+if "%ext:~0,1%" NEQ "." set "ext=.%ext%"
+set "ext=*%ext%"
+:end_ext
+
+for /f "tokens=*" %%i in ('dir /b /a-d /on %ext%') do (
+    if defined pfx ren "%%~i" "%pfx%%%~i"
+)
+exit /b
+
 set "oPre="
 set "mPre=Yes.Minister."
 set "oSuf="
@@ -21,3 +68,5 @@ if exist "%oPre%S%strS%E%strE%%oSuf%.%ext%" (ren "%oPre%S%strS%E%strE%%oSuf%.%ex
 goto loop
 :END
 if "%3" NEQ "" pause
+
+:help
