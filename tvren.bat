@@ -4,7 +4,7 @@
 @REM https://lxvs.net/tvren
 @REM 2021-01-16
 
-chcp 65001
+chcp 65001 >nul
 set pfx=
 set sfx=
 set ext=
