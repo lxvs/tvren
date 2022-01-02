@@ -109,9 +109,14 @@ for /f "tokens=*" %%i in ('dir /b /a-d-h-s /on %pattern%') do (
         )
         if defined pfx set "fn=%pfx%!fn!"
         if defined sfx set "fn=!fn!%sfx%"
-        if "%%~i" NEQ "!fn!!ex!" if defined dryrun (
-             @echo %%~i  -^>  !fn!!ex!
-        ) else ren "%%~i" "!fn!!ex!"
+        if "%%~i" NEQ "!fn!!ex!" if exist "!fn!!ex!" (
+            >&2 echo error: !fn!!ex! already exists
+        ) else if defined dryrun (
+            @echo %%~i  ++^>  !fn!!ex!
+        ) else (
+            @echo %%~i  --^>  !fn!!ex!
+            ren "%%~i" "!fn!!ex!"
+        )
     )
 )
 exit /b
