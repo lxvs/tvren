@@ -10,6 +10,9 @@ set st=
 set xf=
 set xt=
 set pattern=
+set "flagd=-d"
+set "flagh=-h"
+set ext=
 :parse_args
 if "%~1" == "" goto end_parse_args
 if "%~1" == "/?" goto help
@@ -73,13 +76,28 @@ if /i "%sw%" == "xt" (
     shift
     goto parse_args
 )
+if /i "%sw%" == "d" (
+    set "flagd=d"
+    goto parse_args
+)
+if /i "%sw%" == "hidden" (
+    set "flagh=h"
+    goto parse_args
+)
+if /i "%sw%" == "ext" (
+    set ext=1
+    goto parse_args
+)
 >&2 echo error: invalid switch "%sw%"
 exit /b 1
 :end_parse_args
 
-if not defined pfx if not defined sfx if not defined sf if not defined xt (
-    >&2 echo no operation
-    exit /b
+if not defined pfx if not defined sfx if not defined sf if not defined xt goto noop
+
+if defined ext (
+    if defined xf goto ext_and_x
+    if defined xt goto ext_and_x
+    goto end_xt
 )
 
 if not defined xf goto end_xf
@@ -89,44 +107,70 @@ if not defined xt goto end_xt
 if "%xt:~0,1%" NEQ "." set "xt=.%xt%"
 :end_xt
 
-for /f "tokens=*" %%i in ('dir /b /a-d-h-s /on %pattern%') do (
-    set "fn=%%~ni"
-    set "ex=%%~xi"
-    if "!fn!" NEQ "" if "!ex!" NEQ "" (
-        if defined sf (
-            if "%sf:~0,1%" NEQ "~" (
-                set "fn=!fn:%sf%=%st%!"
-            ) else (
-                >&2 echo warning: Cannot substitute from a string starting with "~" due to the Windows batch script limitions.
-            )
-        )
-        if defined xt (
-            if not defined xf (
-                set "ex=%xt%"
-            ) else if "!ex!" == "%xf%" (
-                set "ex=%xt%"
-            )
-        )
-        if defined pfx set "fn=%pfx%!fn!"
-        if defined sfx set "fn=!fn!%sfx%"
-        if "%%~i" NEQ "!fn!!ex!" if exist "!fn!!ex!" (
-            >&2 echo error: !fn!!ex! already exists
-        ) else if defined dryrun (
-            @echo %%~i  ++^>  !fn!!ex!
-        ) else (
-            @echo %%~i  --^>  !fn!!ex!
-            ren "%%~i" "!fn!!ex!"
-        )
-    )
+for /f "tokens=*" %%i in ('dir /b /a-s%flagd%%flagh% /on %pattern%') do (
+    if defined ext (call:DoIt "%%~nxi") else (call:DoIt "%%~ni" "%%~xi")
 )
 exit /b
 
+:DoIt
+set "org=%~1%~2"
+set "fn=%~1"
+if "%fn%" == "" exit /b 1
+set "ex=%~2"
+
+if not defined sf goto skip_sf
+if "%sf:~0,1%" NEQ "~" (
+    set "fn=!fn:%sf%=%st%!"
+) else (
+    >&2 echo warning: Cannot substitute from a string starting with "~" due to the Windows batch script limitions.
+)
+:skip_sf
+
+if not defined xt goto skip_xt
+if not defined xf (
+    set "ex=%xt%"
+) else if "%ex%" == "%xf%" (
+    set "ex=%xt%"
+)
+:skip_xt
+
+if defined pfx set "fn=%pfx%%fn%"
+if defined sfx set "fn=%fn%%sfx%"
+if "%org%" == "%fn%%ex%" exit /b
+if exist "%fn%%ex%" goto already_exists
+if defined dryrun (
+    @echo !org!  ++^>  !fn!%ex%
+    exit /b
+)
+@echo !org!  --^>  !fn!%ex%
+ren "%org%" "%fn%%ex%"
+exit /b
+
+@REM Parentheses inside IF will cause an error.
+:already_exists
+>&2 echo error: %fn%%ex% already exists
+exit /b
+
 :help
-@echo usage: tvren [-p {prefix}] [-s {suffix}] [-sf {sfrom}] [-st {sto}] [ [-xf {xfrom}] -xt {xto}]
+@echo usage: tvren [{flags} ...] [-p {prefix}] [-s {suffix}] [-sf {sfrom}] [-st {sto}] [ [-xf {xfrom}] -xt {xto}]
 @echo;
 @echo  - Subtitute {sfrom} with {sto} in filenames ^(not including file extension^) in current folder
 @echo  - If both {xfrom} and {xto} are specified, change extensions of files that with extension {xfrom} in current folder
 @echo    to {xto}
 @echo  - If {xto} is specified without {xfrom}, change extensions of all files that has an extension in current folder to
 @echo    {xto}
+@echo;
+@echo flags:
+@echo     -n          dry run
+@echo     -d          including directories ^(non-recursive^)
+@echo     -hidden     including the hidden
+@echo     -ext        treat extension name as file name
 exit /b
+
+:noop
+@echo no operation
+exit /b
+
+:ext_and_x
+>&2 echo error: -xf and -xt cannot be used with -ext
+exit /b 1
