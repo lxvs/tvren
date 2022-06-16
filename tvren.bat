@@ -162,8 +162,8 @@ exit /b
 @echo;
 @echo flags:
 @echo     -n          dry run
-@echo     -d          including directories ^(non-recursive^)
-@echo     -hidden     including the hidden
+@echo     -d          operate against directories instead of files
+@echo     -hidden     operate against hidden files or directories only
 @echo     -ext        treat extension name as file name
 exit /b
 
