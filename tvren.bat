@@ -78,6 +78,7 @@ if /i "%sw%" == "xt" (
 )
 if /i "%sw%" == "d" (
     set "flagd=d"
+    if not defined ext set ext=1
     goto parse_args
 )
 if /i "%sw%" == "hidden" (
@@ -162,7 +163,7 @@ exit /b
 @echo;
 @echo flags:
 @echo     -n          dry run
-@echo     -d          operate against directories instead of files
+@echo     -d          operate against directories instead of files; this implies -ext
 @echo     -hidden     operate against hidden files or directories only
 @echo     -ext        treat extension name as file name
 exit /b
