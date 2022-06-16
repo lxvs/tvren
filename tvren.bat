@@ -78,20 +78,33 @@ if /i "%sw%" == "xt" (
 )
 if /i "%sw%" == "d" (
     set "flagd=d"
-    if not defined ext set ext=1
+    goto parse_args
+)
+if /i "%sw%" == "nod" (
+    set "flagd=-d"
     goto parse_args
 )
 if /i "%sw%" == "hidden" (
     set "flagh=h"
     goto parse_args
 )
+if /i "%sw%" == "nohidden" (
+    set "flagh=-h"
+    goto parse_args
+)
 if /i "%sw%" == "ext" (
     set ext=1
+    goto parse_args
+)
+if /i "%sw%" == "noext" (
+    set ext=0
     goto parse_args
 )
 >&2 echo error: invalid switch "%sw%"
 exit /b 1
 :end_parse_args
+
+if not defined ext if "%flagd%" == "d" set ext=1
 
 if not defined pfx if not defined sfx if not defined sf if not defined xt goto noop
 
@@ -165,7 +178,10 @@ exit /b
 @echo     -n          dry run
 @echo     -d          operate against directories instead of files; this implies -ext
 @echo     -hidden     operate against hidden files or directories only
-@echo     -ext        treat extension name as file name
+@echo     -ext        treat extension name as part of file name
+@echo;
+@echo Prefix "no" to a flag means negate. For example, use -d and -noext together to operate against directories only, but
+@echo treat directories as having extension names.
 exit /b
 
 :noop
