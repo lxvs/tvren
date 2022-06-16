@@ -13,6 +13,9 @@ set pattern=
 set "flagd=-d"
 set "flagh=-h"
 set ext=
+set version=0.1.0
+set update=2022-06-16
+set link=https://lxvs.net/tvren
 :parse_args
 if "%~1" == "" goto end_parse_args
 if "%~1" == "/?" goto help
@@ -32,6 +35,8 @@ if "%sw%" == "?" goto help
 if /i "%sw%" == "h" goto help
 if /i "%sw%" == "help" goto help
 if /i "%sw%" == "usage" goto help
+if /i "%sw%" == "v" goto show_version
+if /i "%sw%" == "version" goto show_version
 if /i "%sw%" == "n" (
     set dryrun=1
     goto parse_args
@@ -166,6 +171,8 @@ exit /b
 exit /b
 
 :help
+@call:show_version
+@echo;
 @echo usage: tvren [{flags} ...] [-p {prefix}] [-s {suffix}] [-sf {sfrom}] [-st {sto}] [ [-xf {xfrom}] -xt {xto}]
 @echo;
 @echo  - Subtitute {sfrom} with {sto} in filenames ^(not including file extension^) in current folder
@@ -191,3 +198,9 @@ exit /b
 :ext_and_x
 >&2 echo error: -xf and -xt cannot be used with -ext
 exit /b 1
+
+:show_version
+@echo tvren %version%
+@echo Released on %update%
+@echo %link%
+exit /b
