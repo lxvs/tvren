@@ -18,7 +18,7 @@ if "%~1" == "" goto end_parse_args
 if "%~1" == "/?" goto help
 set "sw=%~1"
 shift
-if "%sw:~0,1%" NEQ "-" (
+if "%sw:~0,1%" NEQ "-" if "%sw:~0,1%" NEQ "/" (
     if not defined pattern (
         set "pattern=%sw%"
     ) else (
