@@ -17,7 +17,7 @@ set version=0.1.0
 set update=2022-06-16
 set website=https://gitlab.com/lzhh/tvren
 :parse_args
-if "%~1" == "" goto end_parse_args
+if %1. == . goto end_parse_args
 if "%~1" == "/?" goto help
 set "sw=%~1"
 shift
