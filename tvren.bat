@@ -15,7 +15,7 @@ set "flagh=-h"
 set ext=
 set version=0.1.0
 set update=2022-06-16
-set link=https://lxvs.net/tvren
+set website=https://gitlab.com/lzhh/tvren
 :parse_args
 if "%~1" == "" goto end_parse_args
 if "%~1" == "/?" goto help
@@ -200,7 +200,6 @@ exit /b
 exit /b 1
 
 :show_version
-@echo tvren %version%
-@echo Released on %update%
-@echo %link%
+@echo tvren %version% ^(%update%^)
+@echo %website%
 exit /b
