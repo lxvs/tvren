@@ -105,8 +105,20 @@ if /i "%sw%" == "noext" (
     set ext=0
     goto parse_args
 )
+if /i "%sw%" == "-" (goto double_dash)
 >&2 echo error: invalid switch "%sw%"
 exit /b 1
+:double_dash
+if %1. == . (goto end_parse_args)
+if %2. NEQ . (
+    >&2 echo error: too many arguments
+    exit /b 1
+)
+if defined pattern (
+    >&2 echo error: invalid argument: %~1
+    exit /b 1
+)
+set "pattern=%~1"
 :end_parse_args
 
 if not defined ext if "%flagd%" == "d" set ext=1
