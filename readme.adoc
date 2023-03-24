@@ -1,0 +1,17 @@
+= Tvren - A Rename Utility
+
+Tvren is a batch script to rename files or directories.  It is far from the best but better than `ren` command in Windows cmd.exe, except that it cannot rename a file or directory to a name that is same but in different case.
+
+== Questions May be Frequently Asked
+
+=== Does it use regex?
+
+No, it does not make use of regex, just does something that can also be done with `ren` command in cmd.exe, but more easily, for example, adding prefix/suffix for files or directories matching a pattern, substituting part of the filename with something different.
+
+=== Why called tvren?
+
+It is named as _tvren_ because it was originally written for renaming a large amount of TV show episodes from, such as, _S01E01_ to _1x01_.
+
+=== Why batch instead of shell script?
+
+Personally I prefer shell scripts much more, but batch script in Windows can rename cloud files in OneDrive without downloading them.
