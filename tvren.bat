@@ -126,9 +126,8 @@ if not defined ext if "%flagd%" == "d" set ext=1
 if not defined pfx if not defined sfx if not defined sf if not defined xt goto noop
 
 if defined ext (
-    if defined xf goto ext_and_x
-    if defined xt goto ext_and_x
-    goto end_xt
+    if defined xf goto ext_and_xf
+    goto end_xf
 )
 
 if not defined xf goto end_xf
@@ -212,8 +211,8 @@ exit /b
 @echo no operation
 exit /b
 
-:ext_and_x
->&2 echo error: -xf and -xt cannot be used with -ext
+:ext_and_xf
+>&2 echo error: -xf cannot be used with -ext
 exit /b 1
 
 :show_version
