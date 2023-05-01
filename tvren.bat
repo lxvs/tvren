@@ -185,7 +185,12 @@ exit /b
 :help
 @call:show_version
 @echo;
-@echo usage: tvren [FLAGS ...] [-p PREFIX] [-s SUFFIX] [-sf SFROM] [-st STO] [ [-xf XFROM] -xt XTO]
+@echo usage: tvren [FLAGS ...]
+@echo              [-p PREFIX] [-s SUFFIX]
+@echo              [-sf SFROM [-st STO] ]
+@echo              [ [-xf XFROM] -xt XTO]
+@echo;
+@echo It will execute some operations in the following sequence:
 @echo;
 @echo  - Subtitute SFROM with STO in filenames ^(not including file extension^) in current folder
 @echo  - If both XFROM and XTO are specified, change extensions of files that with extension XFROM in current folder
