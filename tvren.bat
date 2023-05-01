@@ -185,13 +185,13 @@ exit /b
 :help
 @call:show_version
 @echo;
-@echo usage: tvren [{flags} ...] [-p {prefix}] [-s {suffix}] [-sf {sfrom}] [-st {sto}] [ [-xf {xfrom}] -xt {xto}]
+@echo usage: tvren [FLAGS ...] [-p PREFIX] [-s SUFFIX] [-sf SFROM] [-st STO] [ [-xf XFROM] -xt XTO]
 @echo;
-@echo  - Subtitute {sfrom} with {sto} in filenames ^(not including file extension^) in current folder
-@echo  - If both {xfrom} and {xto} are specified, change extensions of files that with extension {xfrom} in current folder
-@echo    to {xto}
-@echo  - If {xto} is specified without {xfrom}, change extensions of all files that has an extension in current folder to
-@echo    {xto}
+@echo  - Subtitute SFROM with STO in filenames ^(not including file extension^) in current folder
+@echo  - If both XFROM and XTO are specified, change extensions of files that with extension XFROM in current folder
+@echo    to XTO
+@echo  - If XTO is specified without XFROM, change extensions of all files that has an extension in current folder to
+@echo    XTO
 @echo;
 @echo flags:
 @echo     -n          dry run
