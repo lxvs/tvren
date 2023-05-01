@@ -15,8 +15,8 @@ set pattern=
 set "flagd=-d"
 set "flagh=-h"
 set ext=
-set version=0.2.0
-set update=2023-03-24
+set version=0.3.0
+set update=2023-05-01
 set website=https://gitlab.com/lzhh/tvren
 :parse_args
 if %1. == . goto end_parse_args
