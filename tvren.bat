@@ -2,6 +2,8 @@
 @setlocal EnableDelayedExpansion
 chcp 65001 >nul
 set dryrun=
+set dh=
+set dt=
 set pfx=
 set sfx=
 set fl=
@@ -39,6 +41,26 @@ if /i "%sw%" == "v" goto show_version
 if /i "%sw%" == "version" goto show_version
 if /i "%sw%" == "n" (
     set dryrun=1
+    goto parse_args
+)
+if /i "%sw%" == "dh" (
+    set "dh=%~1"
+    shift
+    goto parse_args
+)
+if /i "%sw%" == "dehead" (
+    set "dh=%~1"
+    shift
+    goto parse_args
+)
+if /i "%sw%" == "dt" (
+    set "dt=%~1"
+    shift
+    goto parse_args
+)
+if /i "%sw%" == "detail" (
+    set "dt=%~1"
+    shift
     goto parse_args
 )
 if /i "%sw%" == "p" (
@@ -123,7 +145,7 @@ set "pattern=%~1"
 
 if not defined ext if "%flagd%" == "d" set ext=1
 
-if not defined pfx if not defined sfx if not defined sf if not defined xt goto noop
+if not defined dh if not defined dt if not defined pfx if not defined sfx if not defined sf if not defined xt goto noop
 
 if defined ext (
     if defined xf goto ext_and_xf
@@ -147,6 +169,17 @@ set "org=%~1%~2"
 set "fn=%~1"
 if "%fn%" == "" exit /b 1
 set "ex=%~2"
+
+if not defined dh (goto skip_dh)
+set "fn=!fn:*%dh%=!"
+:skip_dh
+
+if not defined dt (goto skip_dt)
+set "dt_head=!fn:*%dt%=!"
+if "%dt_head%" == "%fn%" (goto skip_dt)
+if "%dt_head%" == "" (goto skip_dt)
+set "fn=!fn:%dt_head%=!"
+:skip_dt
 
 if not defined sf goto skip_sf
 if "%sf:~0,1%" NEQ "~" (
@@ -185,12 +218,15 @@ exit /b
 @call:show_version
 @echo;
 @echo usage: tvren [FLAGS ...]
+@echo              [-dh DEHEAD] [-dt DETAIL]
 @echo              [-p PREFIX] [-s SUFFIX]
 @echo              [-sf SFROM [-st STO] ]
 @echo              [ [-xf XFROM] -xt XTO]
 @echo;
 @echo It will execute some operations in the following sequence:
 @echo;
+@echo  - Remove the part before, and including, the first occurrence of DEHEAD in filenames in current folder
+@echo  - Remove the part after, and NOT including, the first occurrence of DETAIL in filenames in current folder
 @echo  - Subtitute SFROM with STO in filenames ^(not including file extension^) in current folder
 @echo  - If both XFROM and XTO are specified, change extensions of files that with extension XFROM in current folder
 @echo    to XTO
