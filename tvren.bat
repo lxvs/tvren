@@ -159,7 +159,7 @@ if not defined xt goto end_xt
 if "%xt:~0,1%" NEQ "." set "xt=.%xt%"
 :end_xt
 
-for /f "tokens=*" %%i in ('dir /b /a-s%flagd%%flagh% /on %pattern%') do (
+for /f "tokens=*" %%i in ('dir /b /a-s%flagd%%flagh% /on "%pattern%"') do (
     if defined ext (call:DoIt "%%~nxi") else (call:DoIt "%%~ni" "%%~xi")
 )
 exit /b
