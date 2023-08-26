@@ -200,18 +200,18 @@ if not defined xf (
 if defined pfx set "fn=%pfx%%fn%"
 if defined sfx set "fn=%fn%%sfx%"
 if "%org%" == "%fn%%ex%" exit /b
-if exist "%fn%%ex%" goto already_exists
 if defined dryrun (
     @echo !org!  ++^>  !fn!%ex%
     exit /b
 )
 @echo !org!  --^>  !fn!%ex%
+if exist "%fn%%ex%" (goto case_only)
 ren "%org%" "%fn%%ex%"
 exit /b
-
-@REM Parentheses inside IF will cause an error.
-:already_exists
->&2 echo error: %fn%%ex% already exists
+:case_only
+set rand=%RANDOM%
+ren "%org%" "%org%%rand%.tvren.tmp"
+ren "%org%%rand%.tvren.tmp" "%fn%%ex%"
 exit /b
 
 :help
