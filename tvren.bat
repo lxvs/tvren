@@ -200,18 +200,45 @@ if not defined xf (
 if defined pfx set "fn=%pfx%%fn%"
 if defined sfx set "fn=%fn%%sfx%"
 if "%org%" == "%fn%%ex%" exit /b
-if defined dryrun (
-    @echo !org!  ++^>  !fn!%ex%
-    exit /b
+if /i "%org%" == "%fn%%ex%" (goto case_only)
+if exist "%fn%%ex%" (
+    >&2 echo !org!  --^>  !fn!%ex%  : error: target file already exists
+    exit /b 1
 )
-@echo !org!  --^>  !fn!%ex%
-if exist "%fn%%ex%" (goto case_only)
-ren "%org%" "%fn%%ex%"
+if defined dryrun (
+    echo !org!  --^>  !fn!%ex%  : dry run
+    exit /b 0
+)
+set error_msg=
+for /f "delims=" %%i in ('ren "%org%" "%fn%%ex%" 2^>^&1 1^>nul') do (
+    set "error_msg=!error_msg!%%~i "
+)
+if "%error_msg%" == "" (
+    echo !org!  --^>  !fn!%ex%
+) else (
+    >&2 echo !org!  --^>  !fn!%ex%  : error: %error_msg%
+)
 exit /b
 :case_only
+if defined dryrun (
+    echo !org!  --^>  !fn!%ex%  : dry run
+    exit /b 0
+)
 set rand=%RANDOM%
-ren "%org%" "%org%%rand%.tvren.tmp"
-ren "%org%%rand%.tvren.tmp" "%fn%%ex%"
+ren "%org%" "%org%.%rand%.tvren.tmp" 2>nul || (
+    >&2 echo !org!  --^>  !fn!%ex%  : error: `%org%.%rand%.tvren.tmp' exists
+    exit /b 1
+)
+set error_msg=
+for /f "delims=" %%i in ('ren "%org%.%rand%.tvren.tmp" "%fn%%ex%" 2^>^&1 1^>nul') do (
+    set "error_msg=!error_msg!%%~i "
+)
+if "%error_msg%" == "" (
+    echo !org!  --^>  !fn!%ex%
+) else (
+    ren "%org%.%rand%.tvren.tmp" "%org%" 2>nul
+    >&2 echo !org!  --^>  !fn!%ex%  : error: %error_msg%
+)
 exit /b
 
 :help
